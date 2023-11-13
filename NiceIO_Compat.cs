@@ -18,6 +18,16 @@ partial class NPath
 	// TODO: migrate away from these shims
 	public FileInfo FileInfo => new(this);
 	public string[] Elements => new OldNPath(this).Elements;
+	public string ExtensionWithDot
+	{
+		get
+		{
+			var ext = Extension;
+			if (ext != "")
+				ext = '.' + ext;
+			return ext;
+		}
+	}
 	public static NPath ProgramFilesDirectory => new(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 	public static NPath RoamingAppDataDirectory => new(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 	public static NPath LocalAppDataDirectory => new(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
