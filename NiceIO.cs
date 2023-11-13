@@ -1,4 +1,4 @@
-﻿// The MIT License(MIT)
+// The MIT License(MIT)
 // =====================
 //
 // Copyright © `2015-2017` `Lucas Meijer`
@@ -34,14 +34,19 @@ using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using static NiceIO.NPath;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
+
+#if NICEIO_OKTOOLS
+#nullable disable
+namespace OkTools.Core
+#else
 
 //Lets make it hard to accidentally use System.IO.File & System.IO.Directly, and require that it is always completely spelled out.
 using File = NiceIO.Do_Not_Use_File_Directly_Use_FileSystem_Active_Instead;
 using Directory = NiceIO.Do_Not_Use_Directory_Directly_Use_FileSystem_Active_Instead;
 
 namespace NiceIO
+#endif
 {
     /// <summary>
     /// A filesystem path.
@@ -57,10 +62,9 @@ namespace NiceIO
     [DebuggerDisplay("{" + nameof(_path) + "}")]
     [DataContract]
 #if NICEIO_PUBLIC
-    public class NPath
-#else
-    internal class NPath
+    public
 #endif
+    partial class NPath // partial to allow extensions directly in class
         : IComparable, IEquatable<NPath>
     {
         // Assume FS is case sensitive on Linux, and case insensitive on macOS and Windows.
@@ -110,7 +114,7 @@ namespace NiceIO
         public NPath(string path)
         {
             if (path == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(path));
             _path = MakeCompletelyWellFormatted(path);
         }
 
@@ -131,8 +135,8 @@ namespace NiceIO
         static string ConvertToForwardSlashPath(string path)
         {
             if (IsUNCPath(path)) // UNC path
-                return @"\\" + path.Substring(2).Replace(@"\", @"/");
-            return path.Replace(@"\", @"/");
+                return @"\\" + path[2..].Replace('\\', '/');
+            return path.Replace('\\', '/');
         }
 
         static string MakeCompletelyWellFormatted(string path, bool doubleDotsAreCollapsed = false)
@@ -191,11 +195,11 @@ namespace NiceIO
                 if (numberOfForwardSlashes == 1 && IsUNCPath(path))
                     return path;
 
-                return path.Substring(0, path.Length - 1);
+                return path[..^1];
             }
 
             if (numberOfForwardSlashes == 0 && IsUNCPath(path))
-                return path + "/";
+                return path + '/';
 
             return path;
         }
@@ -204,9 +208,9 @@ namespace NiceIO
         {
             var result = ConvertToForwardSlashPath(path).Replace("/./", "/");
             if (result.StartsWith("./", StringComparison.Ordinal))
-                result = result.Substring(2);
+                result = result[2..];
             if (result.EndsWith("/.", StringComparison.Ordinal))
-                result = result.Substring(0, result.Length - 2);
+                result = result[..^2];
             return result;
         }
 
@@ -260,7 +264,7 @@ namespace NiceIO
                 }
             }
 
-            return path.Substring(0, startIndex) + string.Join("/", stack.Reverse().ToArray());
+            return path[..startIndex] + string.Join("/", stack.Reverse());
         }
 
         const int MethodImplOptions_AggressiveInlining = 256; // enum value is only in .NET 4.5+
@@ -277,7 +281,7 @@ namespace NiceIO
         {
             if (IsSlash(append[0]))
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append}");
-            return new NPath(_path + "/" + append);
+            return new NPath(_path + '/' + append);
         }
 
         /// <summary>
@@ -288,7 +292,7 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the first fragment appended, then the second fragment appended.</returns>
         public NPath Combine(string append1, string append2)
         {
-            return new NPath(_path + "/" + append1 + "/" + append2);
+            return new NPath(_path + '/' + append1 + '/' + append2);
         }
 
         /// <summary>
@@ -307,8 +311,8 @@ namespace NiceIO
 
             //if the to-append path starts by going up directories, we need to run our normalizing constructor, if not, we can take the fast path
             if (firstChar == '.' || _path[0] == '.' || _path.Length == 1)
-                return new NPath(_path + "/" + append._path);
-            return new NPath(_path + "/" + append, true);
+                return new NPath(_path + '/' + append._path);
+            return new NPath(_path + '/' + append, true);
         }
 
         /// <summary>
@@ -324,7 +328,7 @@ namespace NiceIO
                 if (!a.IsRelative)
                     throw new ArgumentException($"You cannot .Combine a non-relative path: {a}");
 
-                sb.Append("/");
+                sb.Append('/');
                 sb.Append(a);
             }
 
@@ -393,12 +397,12 @@ namespace NiceIO
                 sb.Append("../");
                 if (IsChildOf(parent))
                 {
-                    sb.Append(thisString.Substring(parent.ToString().Length));
+                    sb.Append(thisString[parent.ToString().Length..]);
                     return new NPath(sb.ToString());
                 }
             }
 
-            throw new ArgumentException();
+            throw new ArgumentException($"Unable to make '{this}' relative to '{path}'", nameof(path));
         }
 
         /// <summary>
@@ -427,7 +431,7 @@ namespace NiceIO
             var newExtension = extension.Length == 0 ? extension : WithDot(extension);
             if (lastDot == -1)
                 return s + newExtension;
-            return s.Substring(0, lastDot) + newExtension;
+            return s[..lastDot] + newExtension;
         }
 
         #endregion construction
@@ -493,16 +497,16 @@ namespace NiceIO
         /// <returns>True if the path describes a file/directory that is or is a child of a directory with the given name; false otherwise.</returns>
         public bool HasDirectory(string dir)
         {
-            if (dir.Contains("/") || dir.Contains("\\"))
+            if (dir.Contains('/') || dir.Contains('\\'))
                 throw new ArgumentException($"Directory cannot contain slash {dir}");
             if (dir == ".")
                 throw new ArgumentException("Single dot is not an allowed argument");
 
-            if (_path.StartsWith(dir + "/", PathStringComparison))
+            if (_path.StartsWith(dir + '/', PathStringComparison))
                 return true;
-            if (_path.EndsWith("/" + dir, PathStringComparison))
+            if (_path.EndsWith('/' + dir, PathStringComparison))
                 return true;
-            return _path.Contains("/" + dir + "/");
+            return _path.Contains('/' + dir + '/');
         }
 
         /// <summary>
@@ -648,12 +652,12 @@ namespace NiceIO
         /// <summary>
         /// Checks if this NPath is equal to another NPath.
         /// </summary>
-        /// <param name="p">The path to compare to.</param>
+        /// <param name="other">The path to compare to.</param>
         /// <returns>True if this NPath represents the same path as the other NPath; false otherwise.</returns>
         /// <remarks>Note that the comparison requires that the paths are the same, not just that the targets are the same; "foo/bar" and "foo/baz/../bar" refer to the same target but will not be treated as equal by this comparison. However, this comparison will ignore case differences when the current operating system does not use case-sensitive filesystems.</remarks>
-        public bool Equals(NPath p)
+        public bool Equals(NPath other)
         {
-            return p != null && string.Equals(p._path, _path, PathStringComparison);
+            return other != null && string.Equals(other._path, _path, PathStringComparison);
         }
 
         /// <summary>
@@ -771,7 +775,7 @@ namespace NiceIO
         public bool HasExtension(params string[] extensions)
         {
             if (extensions.Length == 0)
-                return FileName.Contains(".");
+                return FileName.Contains('.');
 
             foreach (var e in extensions)
             {
@@ -840,7 +844,7 @@ namespace NiceIO
         public NPath[] Files(string[] extensions, bool recurse = false)
         {
             if (!DirectoryExists() || extensions.Length == 0)
-                return new NPath[] {};
+                return Array.Empty<NPath>();
 
             return FileSystem.Active.Directory_GetFiles(this, "*", recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Where(p => extensions.Contains(p.Extension)).ToArray();
         }
@@ -900,7 +904,7 @@ namespace NiceIO
         {
             ThrowIfRoot();
             EnsureParentDirectoryExists();
-            FileSystem.Active.File_WriteAllBytes(this, new byte[0]);
+            FileSystem.Active.File_WriteAllBytes(this, Array.Empty<byte>());
             return this;
         }
 
@@ -1129,11 +1133,11 @@ namespace NiceIO
             var sb = new StringBuilder();
 
             sb.Append(Path.GetTempPath());
-            sb.Append("/");
+            sb.Append('/');
             if (!string.IsNullOrEmpty(prefix))
             {
                 sb.Append(prefix);
-                sb.Append("_");
+                sb.Append('_');
             }
             sb.Append(Path.GetRandomFileName());
 
@@ -1558,11 +1562,13 @@ namespace NiceIO
             /// <inheritdoc />
             public virtual void Dispose()
             {
+	            GC.SuppressFinalize(this);
             }
 
 #pragma warning disable 1591
-            public abstract NPath[] Directory_GetFiles(NPath path, string filter, SearchOption searchOptions);
-            public abstract bool Directory_Exists(NPath path);
+#pragma warning disable CA1707
+	        public abstract NPath[] Directory_GetFiles(NPath path, string filter, SearchOption searchOptions);
+	        public abstract bool Directory_Exists(NPath path);
             public abstract bool File_Exists(NPath path);
             public abstract void File_WriteAllBytes(NPath path, byte[] bytes);
             public abstract void File_Copy(NPath path, NPath destinationPath, bool overWrite);
@@ -1604,6 +1610,7 @@ namespace NiceIO
 
             public abstract void CreateSymbolicLink(NPath fromPath, NPath targetPath, bool targetIsFile);
         }
+#pragma warning restore CA1707
 #pragma warning restore 1591
 
         abstract class SystemIOFileSystem : FileSystem
@@ -1690,7 +1697,7 @@ namespace NiceIO
                 InternalFileDelete(path);
             }
 
-            private void InternalFileDelete(NPath path)
+            private static void InternalFileDelete(NPath path)
             {
                 // Cleaning up symlinks requires slightly special handling on Windows
                 // Windows .NET implementation of File.Delete() does not handle paths longer than MAX_PATH correctly
@@ -2480,8 +2487,11 @@ namespace NiceIO
             static class PosixNative
             {
                 [DllImport("libc", SetLastError = true)]
-                public static extern int symlink([MarshalAs(UnmanagedType.LPStr)] string targetPath,
-                    [MarshalAs(UnmanagedType.LPStr)] string linkPath);
+                public static extern int symlink(
+#pragma warning disable CA2101 // TODO fix encoding
+	                [MarshalAs(UnmanagedType.LPStr)] string targetPath,
+	                [MarshalAs(UnmanagedType.LPStr)] string linkPath);
+#pragma warning restore CA2101
 
                 // Notice that this is not a mapping for the normal 'stat' structure, but specifically for MonoPosixHelper's
                 // own Mono_Posix_Stat structure (in support/map.h). This means we don't need to worry about e.g. Darwin's
@@ -2511,7 +2521,9 @@ namespace NiceIO
                     public long st_ctime_nsec; // Timespec.tv_nsec partner to st_ctime
                 }
 
+#pragma warning disable CA2101 // TODO fix encoding
                 [DllImport("MonoPosixHelper", SetLastError = true, EntryPoint = "Mono_Posix_Syscall_lstat")]
+#pragma warning restore CA2101
                 public static extern int lstat(string file_name, out Stat buf);
 
                 private const uint Mono_Posix_FilePermissions_S_IFLNK = 0x0000a000;

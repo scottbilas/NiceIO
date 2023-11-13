@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>9</LangVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>10</LangVersion>
     <DefineConstants>NICEIO_PUBLIC</DefineConstants>
+    <Nullable>disable</Nullable> <!-- not ready for this yet -->
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="NiceIO.cs"/>
+    <Compile Remove="NiceIO.Tests/**" />
   </ItemGroup>
 </Project>
