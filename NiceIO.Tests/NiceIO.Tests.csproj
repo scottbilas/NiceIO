@@ -3,6 +3,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <NoWarn>CA1707,CA1845,CA1822,CA1825</NoWarn>
+    <GenerateDependencyFile>true</GenerateDependencyFile> <!-- because oktools submodule -->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../NiceIO.csproj"/>
