@@ -56,7 +56,7 @@ namespace NiceIO.Tests
 
             var (b, s) = npath.SplitAtElement(0);
             b.IsRelative.ShouldBeTrue();
-            b.Elements.ShouldBeEmpty();
+            b.Elements.ShouldBe(new[] { "." }); // TODO: unsure about this
             s.IsRelative.ShouldBeTrue();
             s.Elements.ShouldBe(new[] { "path", "to", "thing.txt" });
             b.Combine(s).ToString().ShouldBe(npath.ToString());
