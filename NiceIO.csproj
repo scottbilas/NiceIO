@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>10</LangVersion>
+    <LangVersion>11</LangVersion>
     <DefineConstants>NICEIO_PUBLIC</DefineConstants>
     <Nullable>disable</Nullable> <!-- not ready for this yet -->
   </PropertyGroup>
