@@ -65,11 +65,13 @@ namespace NiceIO.Tests
             Assert.AreEqual("myotherdir", path.FileName);
         }
 
-        [Test]
-        public void FromStringWithMultipleSlashes()
+        [TestCase("///mydir////myfile.txt", "/mydir/myfile.txt")]
+        [TestCase("c:///mydir////myfile.txt", "c:/mydir/myfile.txt")]
+        [TestCase(@"c:\\\mydir\\\\myfile.txt", "c:/mydir/myfile.txt")]
+        public void FromStringWithMultipleSlashes(string test, string expected)
         {
-            var path = new NPath("///mydir////myfile.txt");
-            Assert.AreEqual("/mydir/myfile.txt", path.ToString());
+            var path = new NPath(test);
+            Assert.AreEqual(expected, path.ToString());
         }
 
         [Test]
