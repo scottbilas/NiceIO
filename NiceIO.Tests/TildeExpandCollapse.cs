@@ -9,37 +9,37 @@ namespace NiceIO.Tests
 		[TestCaseSource(nameof(Source))]
 		public void Cases((string, string) ab)
 		{
-            var (a, b) = ab;
-            var (an, bn) = (a.ToNPath(), b.ToNPath());
+			var (a, b) = ab;
+			var (an, bn) = (a.ToNPath(), b.ToNPath());
 
-            an.TildeExpand().ShouldBe(bn);
-            an.TildeExpand().TildeCollapse().ShouldBe(an);
+			an.TildeExpand().ShouldBe(bn);
+			an.TildeExpand().TildeCollapse().ShouldBe(an);
 
-            bn.TildeCollapse().ShouldBe(an);
-            bn.TildeCollapse().TildeExpand().ShouldBe(bn);
+			bn.TildeCollapse().ShouldBe(an);
+			bn.TildeCollapse().TildeExpand().ShouldBe(bn);
 		}
 
-        static IEnumerable<(string, string)> Source() => new[]
-        {
-            // basics
+		static IEnumerable<(string, string)> Source() => new[]
+		{
+			// basics
 
-            ("~", NPath.HomeDirectory.ToString()),
+			("~", NPath.HomeDirectory.ToString()),
 			("~/some/other/file.txt", NPath.HomeDirectory.Combine("some", "other", "file.txt").ToString()),
-            ("~/some/other/file.txt", NPath.HomeDirectory.Combine("some", "other", "file.txt").ToString()),
+			("~/some/other/file.txt", NPath.HomeDirectory.Combine("some", "other", "file.txt").ToString()),
 
-            // unsupported tilde style
+			// unsupported tilde style
 
-            ("~x/file.txt", "~x/file.txt"),
-            ("x~/file.txt", "x~/file.txt"),
+			("~x/file.txt", "~x/file.txt"),
+			("x~/file.txt", "x~/file.txt"),
 
-            // no tilde
+			// no tilde
 
-            ("x/file.txt", "x/file.txt"),
+			("x/file.txt", "x/file.txt"),
 
-            // absolutes
+			// absolutes
 
-            ("c:/blah/file.txt", "c:/blah/file.txt"),
-            ("c:/~/blah/file.txt", "c:/~/blah/file.txt"),
-        };
-    }
+			("c:/blah/file.txt", "c:/blah/file.txt"),
+			("c:/~/blah/file.txt", "c:/~/blah/file.txt"),
+		};
+	}
 }
