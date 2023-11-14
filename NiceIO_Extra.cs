@@ -1,6 +1,8 @@
 // this file adds more toys to NPath without needing to modify NiceIO.cs (should help with merges from upstream)
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 #if NICEIO_OKTOOLS
@@ -57,8 +59,13 @@ partial class NPath
 	    return found;
     }
 
-    // TODO: bring over old tests also
-    
+    // TODO: make this actually stream
+    public IEnumerable<string> ReadLines()
+    {
+	    foreach (var line in this.ReadAllLines())
+		    yield return line;
+    }
+
     public NPath TildeExpand()
     {
 	    // implementing only the most basic part of https://www.gnu.org/software/bash/manual/html_node/Tilde-Expansion.html
@@ -88,6 +95,40 @@ partial class NPath
 
 	    var relative = thisAbs.RelativeTo(homeDir);
 	    return new NPath("~").Combine(relative);
+    }
+
+    public NPath Move(string dest, bool overwrite)
+    {
+	    return Move(new NPath(dest), overwrite);
+    }
+
+    public NPath Move(NPath dest, bool overwrite)
+    {
+	    if (IsRoot)
+		    throw new NotSupportedException(
+			    "Move is not supported on a root level directory because it would be dangerous:" + ToString());
+
+	    if (dest.DirectoryExists())
+		    return Move(dest.Combine(FileName), overwrite);
+
+	    if (FileExists())
+	    {
+		    dest.EnsureParentDirectoryExists();
+		    //FileSystem.Active.File_Move(this, dest, overwrite); TODO UPDATE
+		    File.Move(ToString(SlashMode.Native), dest.ToString(SlashMode.Native), overwrite);
+		    return dest;
+	    }
+
+	    if (DirectoryExists())
+	    {
+		    if (overwrite)
+			    throw new NotImplementedException("Overwrite not currently supported on a directory-move");
+
+		    FileSystem.Active.Directory_Move(this, dest);
+		    return dest;
+	    }
+
+	    throw new ArgumentException("Move() called on a path that doesn't exist: " + ToString());
     }
 
     public NPath ChangeFilename(string newFilename) =>
