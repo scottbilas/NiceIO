@@ -279,7 +279,7 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the fragment appended.</returns>
         public NPath Combine(string append)
         {
-            if (IsSlash(append[0]))
+            if (append.Length != 0 && IsSlash(append[0]))
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append}");
             return new NPath(_path + '/' + append);
         }
@@ -312,7 +312,10 @@ namespace NiceIO
             //if the to-append path starts by going up directories, we need to run our normalizing constructor, if not, we can take the fast path
             if (firstChar == '.' || _path[0] == '.' || _path.Length == 1)
                 return new NPath(_path + '/' + append._path);
-            return new NPath(_path + '/' + append, true);
+         
+            return _path.Length != 0 && _path[^1] == '/' // _path could be c:/
+	            ? new NPath(_path + append, true)
+	            : new NPath(_path + '/' + append, true);
         }
 
         /// <summary>
@@ -574,7 +577,7 @@ namespace NiceIO
                 for (int i = _path.Length - 1; i >= 0; i--)
                 {
                     var c = _path[i];
-                    if (c == '.' || c == '/')
+                    if (c == '.' /*|| c == '/'*/) // TODO: wat, why is extension == filename, should be ""
                         return _path.Substring(i + 1);
                 }
 
@@ -2486,9 +2489,9 @@ namespace NiceIO
 
             static class PosixNative
             {
+#pragma warning disable CA2101 // TODO fix encoding
                 [DllImport("libc", SetLastError = true)]
                 public static extern int symlink(
-#pragma warning disable CA2101 // TODO fix encoding
 	                [MarshalAs(UnmanagedType.LPStr)] string targetPath,
 	                [MarshalAs(UnmanagedType.LPStr)] string linkPath);
 #pragma warning restore CA2101

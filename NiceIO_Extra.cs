@@ -26,6 +26,7 @@ partial class NPath
     public static implicit operator string(NPath path) =>
         path.ToString();
     
+    // TODO: decide whether to keep this, given "Elements" is gone 
     /// <summary>
     /// Split path at the given element index, returning two paths that, if combined, result in the original path.
     /// The subPath begins at the split index, and must be valid within the range of [0,Depth].
@@ -38,9 +39,10 @@ partial class NPath
 	    // TODO: implement this without OldNPath
 	    
 	    var old = new OldNPath(this);
-	    return (
-		    new OldNPath(old.Elements.Take(elementIndex).ToArray(), old.IsRelative, old.DriveLetter),
-		    new OldNPath(old.Elements.Skip(elementIndex).ToArray(), true, null));
+	    var basePath = new OldNPath(old.Elements.Take(elementIndex).ToArray(), old.IsRelative, old.DriveLetter);
+	    var subPath = new OldNPath(old.Elements.Skip(elementIndex).ToArray(), true, null); 
+		
+	    return (basePath, subPath);
     }
 
     public NPath ParentContaining(string needle, bool returnAppended) =>
@@ -61,12 +63,16 @@ partial class NPath
     {
 	    // implementing only the most basic part of https://www.gnu.org/software/bash/manual/html_node/Tilde-Expansion.html
 
-	    var old = new OldNPath(this);
-	    
-	    if (!IsRelative || old.Elements.FirstOrDefault() != "~")
+	    if (!IsRelative)
 		    return this;
 
-	    return HomeDirectory.Combine(old.Elements.Skip(1).ToString());
+	    if (_path == "~")
+		    return HomeDirectory;
+
+	    if (_path.StartsWith("~/", StringComparison.Ordinal))
+		    return HomeDirectory.Combine(_path[2..]);
+
+	    return this;
     }
 
     public NPath TildeCollapse()
@@ -74,16 +80,16 @@ partial class NPath
 	    var thisAbs = MakeAbsolute();
 	    var homeDir = HomeDirectory;
 
+	    if (_path == homeDir._path)
+		    return "~";
+
 	    if (!thisAbs.IsChildOf(HomeDirectory))
 		    return this;
 
 	    var relative = thisAbs.RelativeTo(homeDir);
-	    if (relative.Depth == 0)
-		    return "~";
-
 	    return new NPath("~").Combine(relative);
     }
 
-    // TODO: probably buggy
-    public NPath ChangeFilename(string newFilename) => Parent.Combine(newFilename);
+    public NPath ChangeFilename(string newFilename) =>
+	    newFilename == "" ? Parent : Parent.Combine(newFilename);
 }

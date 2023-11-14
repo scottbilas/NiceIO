@@ -16,7 +16,7 @@ namespace NiceIO;
 partial class NPath
 {
 	// TODO: migrate away from these shims
-	public FileInfo FileInfo => new(this);
+	public FileInfo FileInfo => new(ToString(SlashMode.Native));
 	public string[] Elements => new OldNPath(this).Elements;
 	public string ExtensionWithDot
 	{
