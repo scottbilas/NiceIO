@@ -1,0 +1,33 @@
+name: Validate Dev Branch
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  validate:
+    name: Validate ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Run regular tests
+        run: |
+          dotnet test --nologo -l:"console;verbosity=normal"
+
+      - name: Run package tests
+        run: |
+          cd NiceIO.PackageTest
+          dotnet pack .. -p:NuspecFile=NiceIO.nuspec
+          dotnet add package NiceIO --source ..\bin\release --package-directory packages
+          dotnet run
