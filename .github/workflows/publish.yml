@@ -23,7 +23,7 @@ jobs:
 
       - name: Pack nuget
         run: |
-          dotnet pack -p:NuspecFile=NiceIO.nuspec
+          dotnet pack -p:NuspecFile=NiceIO.nuspec -c Release
 
       - name: Publish NuGet package
         run: |

@@ -29,6 +29,6 @@ jobs:
       - name: Run package tests
         run: |
           cd NiceIO.PackageTest
-          dotnet pack .. -p:NuspecFile=NiceIO.nuspec
+          dotnet pack .. -p:NuspecFile=NiceIO.nuspec -c Release
           dotnet add package NiceIO --source ..\bin\release --package-directory packages
           dotnet run
