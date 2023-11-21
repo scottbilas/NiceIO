@@ -41,6 +41,9 @@ using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 using File = NiceIO.Do_Not_Use_File_Directly_Use_FileSystem_Active_Instead;
 using Directory = NiceIO.Do_Not_Use_Directory_Directly_Use_FileSystem_Active_Instead;
 
+// needed by package, because this may be dropped into a csproj that is nullable
+#nullable disable
+
 namespace NiceIO
 {
     /// <summary>
