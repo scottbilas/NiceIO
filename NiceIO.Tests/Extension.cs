@@ -9,19 +9,22 @@ namespace NiceIO.Tests
         [Test]
         public void SimpleFileNameReturnsExtension()
         {
-            Assert.AreEqual("txt", new NPath("file.txt").Extension);
+	        Assert.AreEqual("txt", new NPath("file.txt").Extension);
+	        Assert.AreEqual("txt", new NPath("path/to/file.txt").Extension);
         }
 
         [Test]
         public void FileWithoutExtensionReturnsEmptyString()
         {
-            Assert.AreEqual("", new NPath("myfile").Extension);
+	        Assert.AreEqual("", new NPath("myfile").Extension);
+	        Assert.AreEqual("", new NPath("path/to/myfile").Extension);
         }
 
         [Test]
         public void FileWithMultipleDotsReturnsExtension()
         {
-            Assert.AreEqual("exe", new NPath("myfile.something.something.exe").Extension);
+	        Assert.AreEqual("exe", new NPath("path/to/myfile.something.something.exe").Extension);
+	        Assert.AreEqual("exe", new NPath("myfile.something.something.exe").Extension);
         }
 
         [Test]

@@ -573,8 +573,10 @@ namespace NiceIO
                 for (int i = _path.Length - 1; i >= 0; i--)
                 {
                     var c = _path[i];
-                    if (c == '.' || c == '/')
+                    if (c == '.')
                         return _path.Substring(i + 1);
+                    if (c == '/')
+	                    return string.Empty;
                 }
 
                 return string.Empty;
