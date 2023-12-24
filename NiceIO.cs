@@ -278,7 +278,9 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the fragment appended.</returns>
         public NPath Combine(string append)
         {
-            if (IsSlash(append[0]))
+	        if (append.Length == 0)
+		        append = "."; // same as NPath("")
+            else if (IsSlash(append[0]))
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append}");
             return new NPath(_path + "/" + append);
         }
@@ -311,7 +313,11 @@ namespace NiceIO
             //if the to-append path starts by going up directories, we need to run our normalizing constructor, if not, we can take the fast path
             if (firstChar == '.' || _path[0] == '.' || _path.Length == 1)
                 return new NPath(_path + "/" + append._path);
-            return new NPath(_path + "/" + append, true);
+            
+            //root paths end with /
+            return _path[_path.Length-1] == '/'
+	            ? new NPath(_path + append, true)
+	            : new NPath(_path + "/" + append, true);
         }
 
         /// <summary>

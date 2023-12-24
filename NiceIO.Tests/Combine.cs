@@ -9,103 +9,120 @@ namespace NiceIO.Tests
         [Test]
         public void WithTrailingSlash()
         {
-            Assert.AreEqual("mysubdir", new NPath("mydir").Combine("mysubdir/").FileName);
+	        Assert.AreEqual("mysubdir", new NPath("mydir").Combine("mysubdir/").FileName);
+	        Assert.AreEqual("mysubdir", new NPath("mydir").Combine(new NPath("mysubdir/")).FileName);
         }
 
         [Test]
         public void WithRootedArgument()
         {
-            Assert.Throws<ArgumentException>(() => new NPath("/somedir").Combine(new NPath("/other")));
+	        Assert.Throws<ArgumentException>(() => new NPath("/somedir").Combine("/other"));
+	        Assert.Throws<ArgumentException>(() => new NPath("/somedir").Combine(new NPath("/other")));
         }
 
         [Test]
         public void Simple()
         {
-            Assert.AreEqual(new NPath("/somedir/other/myfile"), new NPath("/somedir").Combine(new NPath("other/myfile")));
+	        Assert.AreEqual(new NPath("/somedir/other/myfile"), new NPath("/somedir").Combine("other/myfile"));
+	        Assert.AreEqual(new NPath("/somedir/other/myfile"), new NPath("/somedir").Combine(new NPath("other/myfile")));
         }
 
         [Test]
         public void EmptyWithFile()
         {
-            new NPath("").Combine(new NPath("myfile")).AssertIs("myfile");
+	        new NPath("").Combine("myfile").AssertIs("myfile");
+	        new NPath("").Combine(new NPath("myfile")).AssertIs("myfile");
+        }
+
+        [Test]
+        public void FileWithEmptyInMiddle()
+        {
+	        new NPath("dir").Combine("", "file").AssertIs("dir/file");
+	        new NPath("dir").Combine(new NPath(""), new NPath("file")).AssertIs("dir/file");
         }
 
         [Test]
         public void FileWithEmpty()
         {
-            new NPath("dir").Combine(new NPath(""), new NPath("file")).AssertIs("dir/file");
-        }
-
-        [Test]
-        public void FileWithEmptyString()
-        {
-            Assert.AreEqual("dir", new NPath("dir").Combine(new NPath("")).ToString());
+	        Assert.AreEqual("dir", new NPath("dir").Combine("").ToString());
+	        Assert.AreEqual("dir", new NPath("dir").Combine(new NPath("")).ToString());
         }
 
         [Test]
         public void WithRelativePathStartingWithDotDot()
         {
-            Assert.AreEqual(new NPath("/other/myfile"), new NPath("/somedir/somedir2").Combine(new NPath("../../other/myfile")));
+	        Assert.AreEqual(new NPath("/other/myfile"), new NPath("/somedir/somedir2").Combine("../../other/myfile"));
+	        Assert.AreEqual(new NPath("/other/myfile"), new NPath("/somedir/somedir2").Combine(new NPath("../../other/myfile")));
         }
 
         [Test]
         public void CombiningDotDotOntoRelativePath()
         {
-            Assert.AreEqual(new NPath("../other/myfile"), new NPath("somedir/somedir2").Combine(new NPath("../../../other/myfile")));
+	        Assert.AreEqual(new NPath("../other/myfile"), new NPath("somedir/somedir2").Combine("../../../other/myfile"));
+	        Assert.AreEqual(new NPath("../other/myfile"), new NPath("somedir/somedir2").Combine(new NPath("../../../other/myfile")));
         }
 
         [Test]
         public void WithMultipleArguments()
         {
-            Assert.AreEqual(new NPath("/a/b/c/d/e"), new NPath("/a").Combine("b", "c/d", "e"));
+	        Assert.AreEqual(new NPath("/a/b/c/d/e"), new NPath("/a").Combine("b", "c/d", "e"));
+	        Assert.AreEqual(new NPath("/a/b/c/d/e"), new NPath("/a").Combine(new NPath("b"), new NPath("c/d"), new NPath("e")));
         }
 
         [Test]
         public void RelativeThatGoesAboveRoot()
         {
-            Assert.Throws<ArgumentException>(() => new NPath("/a").Combine(new NPath("../../b")));
+	        Assert.Throws<ArgumentException>(() => new NPath("/a").Combine("../../b"));
+	        Assert.Throws<ArgumentException>(() => new NPath("/a").Combine(new NPath("../../b")));
         }
 
         [Test]
         public void CombineWithLinuxRoot()
         {
-            Assert.AreEqual(new NPath("/somedir"), new NPath("/").Combine("somedir"));
+	        Assert.AreEqual(new NPath("/somedir"), new NPath("/").Combine("somedir"));
+	        Assert.AreEqual(new NPath("/somedir"), new NPath("/").Combine(new NPath("somedir")));
         }
 
         [Test]
         public void CombineWithWindowsRoot()
         {
             Assert.AreEqual(new NPath("C:\\somedir"), new NPath("C:\\").Combine("somedir"));
+	        Assert.AreEqual(new NPath("C:\\somedir"), new NPath("C:\\").Combine(new NPath("somedir")));
         }
 
         [Test]
         public void CombineWithWindowsUNCRoot()
         {
-            Assert.AreEqual(new NPath("\\\\MyWindowsPC\\somedir"), new NPath("\\\\MyWindowsPC\\").Combine("somedir"));
+	        Assert.AreEqual(new NPath("\\\\MyWindowsPC\\somedir"), new NPath("\\\\MyWindowsPC\\").Combine("somedir"));
+	        Assert.AreEqual(new NPath("\\\\MyWindowsPC\\somedir"), new NPath("\\\\MyWindowsPC\\").Combine(new NPath("somedir")));
         }
 
         [Test]
         public void CombineResultingInWindowsRootIsRoot()
         {
-            Assert.IsTrue(new NPath("C:\\somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("C:\\somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("C:\\somedir").Combine(new NPath("..")).IsRoot);
         }
 
         [Test]
         public void CombineResultingInWindowsUNCRootIsRoot()
         {
-            Assert.IsTrue(new NPath("\\\\MyWindowsPC\\somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("\\\\MyWindowsPC\\somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("\\\\MyWindowsPC\\somedir").Combine(new NPath("..")).IsRoot);
         }
 
         [Test]
         public void CombineResultingInLinuxRootIsRoot()
         {
-            Assert.IsTrue(new NPath("/somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("/somedir").Combine("..").IsRoot);
+	        Assert.IsTrue(new NPath("/somedir").Combine(new NPath("..")).IsRoot);
         }
 
         [Test]
-        public void CombineWithTwoStrings()
+        public void CombineWithTwo()
         {
-            Assert.AreEqual("mydir/hello/there", new NPath("mydir").Combine("hello", "there").ToString());
+	        Assert.AreEqual("mydir/hello/there", new NPath("mydir").Combine("hello", "there").ToString());
+	        Assert.AreEqual("mydir/hello/there", new NPath("mydir").Combine(new NPath("hello"), new NPath("there")).ToString());
         }
     }
 }
