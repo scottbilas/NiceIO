@@ -12,10 +12,20 @@ namespace NiceIO.Tests
             Assert.AreEqual("mysubdir", new NPath("mydir").Combine("mysubdir/").FileName);
         }
 
-        [Test]
-        public void WithRootedArgument()
+        [TestCase("/somedir", "/other")]
+        [TestCase("C:/somedir", "/other")]
+        public void WithRootedArgument(
+	        [Values("/somedir", "C:/somedir", @"\\MyWindowsPC\someshare")] string a,
+	        [Values("/other", "C:/other", @"\\MyWindowsPC\othershare")] string b)
         {
-            Assert.Throws<ArgumentException>(() => new NPath("/somedir").Combine(new NPath("/other")));
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine(b));
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine(new NPath(b)));
+
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine("abc/def", b));
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine(new NPath("abc/def"), new NPath(b)));
+	        
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine(b, "abc/def"));
+	        Assert.Throws<ArgumentException>(() => new NPath(a).Combine(new NPath(b), new NPath("abc/def")));
         }
 
         [Test]
@@ -63,7 +73,9 @@ namespace NiceIO.Tests
         [Test]
         public void RelativeThatGoesAboveRoot()
         {
-            Assert.Throws<ArgumentException>(() => new NPath("/a").Combine(new NPath("../../b")));
+	        Assert.Throws<ArgumentException>(() => new NPath("/a").Combine(new NPath("../../b")));
+	        Assert.Throws<ArgumentException>(() => new NPath("C:/a").Combine(new NPath("../../b")));
+	        Assert.Throws<ArgumentException>(() => new NPath(@"\\MyWindowsPC\a").Combine(new NPath("../../b")));
         }
 
         [Test]
