@@ -278,8 +278,11 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the fragment appended.</returns>
         public NPath Combine(string append)
         {
-            if (!GetIsRelative(append))
+	        if (append.Length == 0)
+		        append = ".";
+            else if (!GetIsRelative(append))
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append}");
+	        
             return new NPath(_path + "/" + append);
         }
 
@@ -291,10 +294,16 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the first fragment appended, then the second fragment appended.</returns>
         public NPath Combine(string append1, string append2)
         {
-	        if (!GetIsRelative(append1))
+	        if (append1.Length == 0)
+		        append1 = ".";
+	        else if (!GetIsRelative(append1))
 		        throw new ArgumentException($"You cannot .Combine a non-relative path: {append1}");
+
+	        if (append2.Length == 0)
+		        append2 = ".";
 	        if (!GetIsRelative(append2))
 		        throw new ArgumentException($"You cannot .Combine a non-relative path: {append2}");
+	        
             return new NPath(_path + "/" + append1 + "/" + append2);
         }
 
