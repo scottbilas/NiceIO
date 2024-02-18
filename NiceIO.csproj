@@ -8,6 +8,9 @@
   <ItemGroup>
     <Compile Include="NiceIO.cs"/>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
 
   <!-- macro-ize the namespace, and make class partial so package users can add statics -->
   <!-- usage: `dotnet pack -p:NuspecFile=NiceIO.nuspec` -->

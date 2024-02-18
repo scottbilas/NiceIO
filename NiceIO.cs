@@ -464,31 +464,36 @@ namespace NiceIO
         }
 
         /// <summary>
-        /// The name of the file or directory given at the end of this path, including any extension.
+        /// The name of the file or directory given at the end of this path, including any extension, as a span.
         /// </summary>
-        public string FileName
+        public ReadOnlySpan<char> FileNameSpan
         {
             get
             {
                 ThrowIfRoot();
 
                 if (_path.Length == 0)
-                    return string.Empty;
+                    return default;
 
                 if (_path == ".")
-                    return string.Empty;
+                    return default;
 
                 for (int i = _path.Length - 1; i >= 0; i--)
                 {
                     if (_path[i] == '/')
                     {
-                        return i == _path.Length - 1 ? string.Empty : _path.Substring(i + 1);
+                        return i == _path.Length - 1 ? default : _path.AsSpan(i + 1);
                     }
                 }
 
-                return _path;
+                return _path.AsSpan();
             }
         }
+
+        /// <summary>
+        /// The name of the file or directory given at the end of this path, including any extension.
+        /// </summary>
+        public string FileName => FileNameSpan.ToString();
 
         /// <summary>
         /// The name of the file or directory given at the end of this path, excluding the extension.
@@ -569,7 +574,7 @@ namespace NiceIO
         /// <summary>
         /// The extension of the file, excluding the initial "." character.
         /// </summary>
-        public string Extension
+        public ReadOnlySpan<char> ExtensionSpan
         {
             get
             {
@@ -580,14 +585,16 @@ namespace NiceIO
                 {
                     var c = _path[i];
                     if (c == '.')
-                        return _path.Substring(i + 1);
+                        return _path.AsSpan(i + 1);
                     if (c == '/')
-	                    return string.Empty;
+	                    return default;
                 }
 
-                return string.Empty;
+                return default;
             }
         }
+
+        public string Extension => ExtensionSpan.ToString();
 
         /// <summary>
         /// UNC server name of the path, if present. Null if not present.
