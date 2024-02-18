@@ -278,9 +278,7 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the fragment appended.</returns>
         public NPath Combine(string append)
         {
-	        if (append.Length == 0)
-		        append = "."; // same as NPath("")
-            else if (IsSlash(append[0]))
+            if (!GetIsRelative(append))
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append}");
             return new NPath(_path + "/" + append);
         }
@@ -293,6 +291,10 @@ namespace NiceIO
         /// <returns>A new NPath which is the existing path with the first fragment appended, then the second fragment appended.</returns>
         public NPath Combine(string append1, string append2)
         {
+	        if (!GetIsRelative(append1))
+		        throw new ArgumentException($"You cannot .Combine a non-relative path: {append1}");
+	        if (!GetIsRelative(append2))
+		        throw new ArgumentException($"You cannot .Combine a non-relative path: {append2}");
             return new NPath(_path + "/" + append1 + "/" + append2);
         }
 
@@ -306,11 +308,11 @@ namespace NiceIO
             if (append == null)
                 throw new ArgumentNullException(nameof(append));
 
-            var firstChar = append._path[0];
-            if (IsSlash(firstChar))
+            if (!append.IsRelative)
                 throw new ArgumentException($"You cannot .Combine a non-relative path: {append._path}");
 
             //if the to-append path starts by going up directories, we need to run our normalizing constructor, if not, we can take the fast path
+            var firstChar = append._path[0];
             if (firstChar == '.' || _path[0] == '.' || _path.Length == 1)
                 return new NPath(_path + "/" + append._path);
             
@@ -446,21 +448,20 @@ namespace NiceIO
         /// <summary>
         /// Whether this path is relative (i.e. not absolute) or not.
         /// </summary>
-        public bool IsRelative
+        public bool IsRelative => GetIsRelative(_path);
+
+        static bool GetIsRelative(string path)
         {
-            get
-            {
-                if (_path[0] == '/')
-                    return false;
+	        if (path[0] == '/')
+		        return false;
 
-                if (_path.Length >= 3 && _path[1] == ':' && _path[2] == '/')
-                    return false;
+	        if (path.Length >= 3 && path[1] == ':' && path[2] == '/')
+		        return false;
 
-                if (_path[0] == '\\')
-                    return false;
+	        if (path[0] == '\\')
+		        return false;
 
-                return true;
-            }
+	        return true;
         }
 
         /// <summary>

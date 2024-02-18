@@ -1,8 +1,8 @@
 .idea
 obj/
 bin/
-NiceIO.v12.suo
 .nuget/
 packages/
-NiceIO.sln.DotSettings.user
-/.vs/NiceIO/v14/.suo
+*.suo
+*.user
+*.ddargs.json
