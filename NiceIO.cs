@@ -2655,9 +2655,9 @@ namespace NiceIO
     /// NPath-related extension methods for other common types.
     /// </summary>
 #if NICEIO_PUBLIC
-    public static class Extensions
+    public static class NPathExtensions
 #else
-    internal static class Extensions
+    internal static class NPathExtensions
 #endif
     {
         /// <summary>
