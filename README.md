@@ -1,6 +1,5 @@
 # NiceIO 
-[![build and 
-test](https://github.com/scottbilas/NiceIO/actions/workflows/validate.ymll/badge.svg)](https://github.com/scottbilas/NiceIO/actions/workflows/validate.ymll)
+[![validate](https://github.com/scottbilas/NiceIO/actions/workflows/validate.yml/badge.svg)](https://github.com/scottbilas/NiceIO/actions/workflows/validate.yml)
 
 _This is a fork of Lucas Meijer's [NiceIO](https://github.com/lucasmeijer/NiceIO). 99.9% credit goes to Lucas for this
 library. I mostly just added nuget injection packaging that maintains his "just copy it into your  project" design. -scott_
