@@ -1,0 +1,182 @@
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
+namespace NiceIO
+{
+    public enum DeleteMode
+    {
+        Normal = 0,
+        Soft = 1,
+    }
+    [System.Diagnostics.DebuggerDisplay("{_path}")]
+    [System.Runtime.Serialization.DataContract]
+    public class NPath : System.IComparable, System.IEquatable<NiceIO.NPath>
+    {
+        public NPath(string path) { }
+        public System.IO.FileAttributes Attributes { get; set; }
+        public int Depth { get; }
+        public string DriveLetter { get; }
+        public string Extension { get; }
+        public System.ReadOnlySpan<char> ExtensionSpan { get; }
+        public string FileName { get; }
+        public System.ReadOnlySpan<char> FileNameSpan { get; }
+        public string FileNameWithoutExtension { get; }
+        public bool IsCurrentDir { get; }
+        public bool IsRelative { get; }
+        public bool IsRoot { get; }
+        public bool IsSymbolicLink { get; }
+        public bool IsUNC { get; }
+        public NiceIO.NPath Parent { get; }
+        public System.Collections.Generic.IEnumerable<NiceIO.NPath> RecursiveParents { get; }
+        public string UNCServerName { get; }
+        public static NiceIO.NPath CurrentDirectory { get; }
+        public static NiceIO.NPath HomeDirectory { get; }
+        public static NiceIO.NPath SystemTemp { get; }
+        public NiceIO.NPath ChangeExtension(string extension) { }
+        public NiceIO.NPath Combine(NiceIO.NPath append) { }
+        public NiceIO.NPath Combine(params NiceIO.NPath[] append) { }
+        public NiceIO.NPath Combine(string append) { }
+        public NiceIO.NPath Combine(string append1, string append2) { }
+        public int CompareTo(object obj) { }
+        public NiceIO.NPath[] Contents(bool recurse = false) { }
+        public NiceIO.NPath[] Contents(string filter, bool recurse = false) { }
+        public NiceIO.NPath Copy(NiceIO.NPath dest) { }
+        public NiceIO.NPath Copy(NiceIO.NPath dest, System.Func<NiceIO.NPath, bool> fileFilter) { }
+        public System.Collections.Generic.IEnumerable<NiceIO.NPath> CopyFiles(NiceIO.NPath destination, bool recurse, System.Func<NiceIO.NPath, bool> fileFilter = null) { }
+        public NiceIO.NPath CreateDirectory() { }
+        public NiceIO.NPath CreateDirectory(NiceIO.NPath directory) { }
+        public NiceIO.NPath CreateFile() { }
+        public NiceIO.NPath CreateFile(NiceIO.NPath file) { }
+        public NiceIO.NPath CreateSymbolicLink(NiceIO.NPath targetPath, bool targetIsFile = true) { }
+        public void Delete(NiceIO.DeleteMode deleteMode = 0) { }
+        public NiceIO.NPath DeleteContents() { }
+        public NiceIO.NPath DeleteIfExists(NiceIO.DeleteMode deleteMode = 0) { }
+        public NiceIO.NPath[] Directories(bool recurse = false) { }
+        public NiceIO.NPath[] Directories(string filter, bool recurse = false) { }
+        public bool DirectoryExists(NiceIO.NPath append = null) { }
+        public NiceIO.NPath DirectoryMustExist() { }
+        public NiceIO.NPath EnsureDirectoryExists(NiceIO.NPath append = null) { }
+        public NiceIO.NPath EnsureParentDirectoryExists() { }
+        public bool Equals(NiceIO.NPath p) { }
+        public override bool Equals(object obj) { }
+        public bool Exists(NiceIO.NPath append = null) { }
+        public bool FileExists(NiceIO.NPath append = null) { }
+        public NiceIO.NPath FileMustExist() { }
+        public NiceIO.NPath[] Files(bool recurse = false) { }
+        public NiceIO.NPath[] Files(string[] extensions, bool recurse = false) { }
+        public NiceIO.NPath[] Files(string filter, bool recurse = false) { }
+        public long GetFileSize() { }
+        public override int GetHashCode() { }
+        public System.DateTime GetLastWriteTimeUtc() { }
+        public bool HasDirectory(string dir) { }
+        public bool HasExtension(string extension) { }
+        public bool HasExtension(params string[] extensions) { }
+        public string InQuotes(NiceIO.SlashMode slashMode = 1) { }
+        public string InQuotesResolved(NiceIO.SlashMode slashMode = 1) { }
+        public bool IsChildOf(NiceIO.NPath potentialBasePath) { }
+        public bool IsSameAsOrChildOf(NiceIO.NPath potentialBasePath) { }
+        public NiceIO.NPath MakeAbsolute(NiceIO.NPath base = null) { }
+        public NiceIO.NPath Move(NiceIO.NPath dest) { }
+        public System.Collections.Generic.IEnumerable<NiceIO.NPath> MoveFiles(NiceIO.NPath destination, bool recurse, System.Func<NiceIO.NPath, bool> fileFilter = null) { }
+        public NiceIO.NPath ParentContaining(NiceIO.NPath needle) { }
+        public byte[] ReadAllBytes() { }
+        public string[] ReadAllLines() { }
+        public string ReadAllText() { }
+        public NiceIO.NPath RelativeTo(NiceIO.NPath path) { }
+        public NiceIO.NPath ReplaceAllText(string contents) { }
+        public NiceIO.NPath ResolveWithFileSystem() { }
+        public NiceIO.NPath SetLastWriteTimeUtc(System.DateTime lastWriteTimeUtc) { }
+        public override string ToString() { }
+        public string ToString(NiceIO.SlashMode slashMode) { }
+        public NiceIO.NPath WriteAllBytes(byte[] bytes) { }
+        public NiceIO.NPath WriteAllLines(string[] contents) { }
+        public NiceIO.NPath WriteAllText(string contents) { }
+        public static NiceIO.NPath CreateTempDirectory(string prefix = "") { }
+        public static System.IDisposable SetCurrentDirectory(NiceIO.NPath directory) { }
+        public static System.IDisposable WithFileSystem(NiceIO.NPath.FileSystem fileSystem) { }
+        [System.Obsolete("Obsolete. If you need this behaviour you can implement a custom NPath.FileSystem " +
+            "and install it with NPath.WithFileSystem()", true)]
+        public static System.IDisposable WithFrozenCurrentDirectory(NiceIO.NPath frozenCurrentDirectory) { }
+        public static NiceIO.NPath op_Implicit(string input) { }
+        public static bool operator !=(NiceIO.NPath a, NiceIO.NPath b) { }
+        public static bool operator ==(NiceIO.NPath a, NiceIO.NPath b) { }
+        public abstract class FileSystem : System.IDisposable
+        {
+            protected FileSystem() { }
+            public static NiceIO.NPath.FileSystem Active { get; }
+            public abstract void CreateSymbolicLink(NiceIO.NPath fromPath, NiceIO.NPath targetPath, bool targetIsFile);
+            public abstract void Directory_CreateDirectory(NiceIO.NPath path);
+            public abstract void Directory_Delete(NiceIO.NPath path, bool b);
+            public abstract bool Directory_Exists(NiceIO.NPath path);
+            public abstract NiceIO.NPath Directory_GetCurrentDirectory();
+            public abstract NiceIO.NPath[] Directory_GetDirectories(NiceIO.NPath path, string filter, System.IO.SearchOption searchOptions);
+            public abstract NiceIO.NPath[] Directory_GetFiles(NiceIO.NPath path, string filter, System.IO.SearchOption searchOptions);
+            public abstract void Directory_Move(NiceIO.NPath path, NiceIO.NPath destPath);
+            public abstract void Directory_SetCurrentDirectory(NiceIO.NPath directoryPath);
+            public virtual void Dispose() { }
+            public abstract void File_Copy(NiceIO.NPath path, NiceIO.NPath destinationPath, bool overWrite);
+            public abstract void File_Delete(NiceIO.NPath path);
+            public abstract bool File_Exists(NiceIO.NPath path);
+            public abstract System.IO.FileAttributes File_GetAttributes(NiceIO.NPath path);
+            public abstract System.DateTime File_GetLastWriteTimeUtc(NiceIO.NPath path);
+            public abstract long File_GetSize(NiceIO.NPath path);
+            public abstract void File_Move(NiceIO.NPath path, NiceIO.NPath destinationPath);
+            public abstract byte[] File_ReadAllBytes(NiceIO.NPath path);
+            public abstract string[] File_ReadAllLines(NiceIO.NPath path);
+            public abstract string File_ReadAllText(NiceIO.NPath path);
+            public abstract void File_SetAttributes(NiceIO.NPath path, System.IO.FileAttributes value);
+            public abstract void File_SetLastWriteTimeUtc(NiceIO.NPath path, System.DateTime lastWriteTimeUtc);
+            public abstract void File_WriteAllBytes(NiceIO.NPath path, byte[] bytes);
+            public abstract void File_WriteAllLines(NiceIO.NPath path, string[] contents);
+            public abstract void File_WriteAllText(NiceIO.NPath path, string contents);
+            public abstract bool IsSymbolicLink(NiceIO.NPath path);
+            public abstract NiceIO.NPath Resolve(NiceIO.NPath path);
+        }
+        public abstract class RelayingFileSystem : NiceIO.NPath.FileSystem
+        {
+            protected RelayingFileSystem(NiceIO.NPath.FileSystem baseFileSystem) { }
+            protected NiceIO.NPath.FileSystem BaseFileSystem { get; }
+            public override void CreateSymbolicLink(NiceIO.NPath fromPath, NiceIO.NPath targetPath, bool targetIsFile) { }
+            public override void Directory_CreateDirectory(NiceIO.NPath path) { }
+            public override void Directory_Delete(NiceIO.NPath path, bool b) { }
+            public override bool Directory_Exists(NiceIO.NPath path) { }
+            public override NiceIO.NPath Directory_GetCurrentDirectory() { }
+            public override NiceIO.NPath[] Directory_GetDirectories(NiceIO.NPath path, string filter, System.IO.SearchOption searchOptions) { }
+            public override NiceIO.NPath[] Directory_GetFiles(NiceIO.NPath path, string filter, System.IO.SearchOption searchOptions) { }
+            public override void Directory_Move(NiceIO.NPath path, NiceIO.NPath destPath) { }
+            public override void Directory_SetCurrentDirectory(NiceIO.NPath directoryPath) { }
+            public override void File_Copy(NiceIO.NPath path, NiceIO.NPath destinationPath, bool overWrite) { }
+            public override void File_Delete(NiceIO.NPath path) { }
+            public override bool File_Exists(NiceIO.NPath path) { }
+            public override System.IO.FileAttributes File_GetAttributes(NiceIO.NPath path) { }
+            public override System.DateTime File_GetLastWriteTimeUtc(NiceIO.NPath path) { }
+            public override long File_GetSize(NiceIO.NPath path) { }
+            public override void File_Move(NiceIO.NPath path, NiceIO.NPath destinationPath) { }
+            public override byte[] File_ReadAllBytes(NiceIO.NPath path) { }
+            public override string[] File_ReadAllLines(NiceIO.NPath path) { }
+            public override string File_ReadAllText(NiceIO.NPath path) { }
+            public override void File_SetAttributes(NiceIO.NPath path, System.IO.FileAttributes value) { }
+            public override void File_SetLastWriteTimeUtc(NiceIO.NPath path, System.DateTime lastWriteTimeUtc) { }
+            public override void File_WriteAllBytes(NiceIO.NPath path, byte[] bytes) { }
+            public override void File_WriteAllLines(NiceIO.NPath path, string[] contents) { }
+            public override void File_WriteAllText(NiceIO.NPath path, string contents) { }
+            public override bool IsSymbolicLink(NiceIO.NPath path) { }
+            public override NiceIO.NPath Resolve(NiceIO.NPath path) { }
+        }
+    }
+    public static class NPathExtensions
+    {
+        public static System.Collections.Generic.IEnumerable<NiceIO.NPath> Copy(this System.Collections.Generic.IEnumerable<NiceIO.NPath> self, NiceIO.NPath dest) { }
+        public static System.Collections.Generic.IEnumerable<NiceIO.NPath> Delete(this System.Collections.Generic.IEnumerable<NiceIO.NPath> self) { }
+        public static System.Collections.Generic.IEnumerable<string> InQuotes(this System.Collections.Generic.IEnumerable<NiceIO.NPath> self, NiceIO.SlashMode slashMode = 1) { }
+        public static string[] InQuotesResolved(this System.Collections.Generic.IEnumerable<NiceIO.NPath> paths) { }
+        public static System.Collections.Generic.IEnumerable<NiceIO.NPath> Move(this System.Collections.Generic.IEnumerable<NiceIO.NPath> self, NiceIO.NPath dest) { }
+        public static NiceIO.NPath[] ResolveWithFileSystem(this System.Collections.Generic.IEnumerable<NiceIO.NPath> paths) { }
+        public static NiceIO.NPath ToNPath(this string path) { }
+        public static System.Collections.Generic.IEnumerable<NiceIO.NPath> ToNPaths(this System.Collections.Generic.IEnumerable<string> paths) { }
+    }
+    public enum SlashMode
+    {
+        Native = 0,
+        Forward = 1,
+        Backward = 2,
+    }
+}
