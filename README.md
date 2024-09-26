@@ -1,14 +1,74 @@
 # NiceIO 
 [![build and 
-test](https://github.com/lucasmeijer/NiceIO/actions/workflows/test.yml/badge.svg)](https://github.com/lucasmeijer/NiceIO/actions/workflows/test.yml)
+test](https://github.com/scottbilas/NiceIO/actions/workflows/test.yml/badge.svg)](https://github.com/scottbilas/NiceIO/actions/workflows/test.yml)
 
-For when you've had to use System.IO one time too many. 
+_This is a fork of Lucas Meijer's [NiceIO](https://github.com/lucasmeijer/NiceIO). 99.9% credit goes to Lucas for this
+library. I mostly just added nuget injection packaging that maintains his "just copy it into your  project" design. -scott_
 
-I need to make c# juggle files & directories around a lot. It has to work on osx, linux and windows. It always hurts, and I've never enjoyed it. NiceIO is an attempt to fix that. It's a single file library, no binaries, no .csproj's, no nuget specs, or any of that. .NET Framework 3.5. Whenever dealing with files makes you cringe, just grab NiceIO.cs, throw it in your project and get on with your business.
+## About
 
-This project is in a very early state and the API is very far from stable.
+For when you've had to use `System.IO` one time too many. 
 
-Basic usage:
+I need to make c# juggle files & directories around a lot. It has to work on osx, linux and windows. It always hurts, and I've never enjoyed it. NiceIO is an attempt to fix that.
+
+NiceIO is MIT Licensed.
+
+## Installation
+
+While you can just copy [NiceIO.cs](https://raw.githubusercontent.com/scottbilas/NiceIO/refs/heads/dev/NiceIO.cs)
+directly into your project and hack at it, NiceIO is **best used in its package form**: add a project reference to
+[OkTools.NiceIO](https://www.nuget.org/packages/OkTools.NiceIO).
+
+But this is different from a typical Nuget package!! `OkTools.NiceIO` injects `NiceIO.cs` _directly into your project_.
+There will be no `NiceIO.dll`. Also, because `NPath` is `partial`, you can add whatever you want to it without being
+limited to extension methods (though those of course are also fine).
+
+You get all the benefits of a version-controlled, upstream-maintained class while still being able to directly extend it.
+
+To get `NPath`, do the following:
+
+1. Add a reference to `OkTools.NiceIO` in your project.
+
+2. (Optional) Decide if you want `NPath` to be public API. By default, it is `internal`, but if you want your library
+to publish it or use in other public API, you can set `NICEIO_PUBLIC` as a `DefineConstant` in a project `PropertyGroup`.
+
+3. (Optional) Decide if you want `NPath` to be in the default `NiceIO` namespace. You can change it to what you want by
+setting a `PreprocessorValue` for `NICEIO_NAMESPACE` in a project `ItemGroup`.
+
+4. (Optional) Add members directly to `NPath` by creating a `partial class NPath` in your project and adding them there.
+
+Here is an example snippet of a `.csproj` that exercises the above features:
+
+```xml
+<PropertyGroup>
+  <DefineConstants>$(DefineConstants);NICEIO_PUBLIC</DefineConstants>
+</PropertyGroup>
+<ItemGroup>
+  <PackageReference Include="OkTools.NiceIO" />
+  <PreprocessorValue Include="NICEIO_NAMESPACE" Value="My.Lovely.Namespace" Visible="false" />
+</ItemGroup>
+```
+
+After a `dotnet restore`, this project will contain a new public class `My.Lovely.Namespace.NPath`.
+
+Here's a silly example of extending `NPath` in that same project:
+
+```c#
+// MyProject/NiceIO_MoreStuff.cs
+namespace My.Lovely.Namespace;
+partial class NPath
+{
+    bool _someField;
+    public void DoSomething() => _someField = _path.Length > 10;
+}
+``` 
+
+Real world usage of the above features is demonstrated at another OkTools project at
+[Core.csproj](https://github.com/scottbilas/OkTools/blob/dev/src/Core/Core.csproj)
+and [NiceIO_Ext.cs](https://github.com/scottbilas/OkTools/blob/dev/src/Core/NiceIO_Ext.cs).     
+
+## Basic Usage
+
 ```c#
 //paths are immutable
 NPath path1 = new NPath(@"/var/folders/something");
@@ -88,5 +148,3 @@ string[] lines = myfile.ReadAllLines();
 myFile.WriteAllText("hello");
 myFile.WriteAllLines(new[] { "one", "two"});
 ```
-
-NiceIO is MIT Licensed.

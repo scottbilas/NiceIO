@@ -7,7 +7,7 @@
     <id>OkTools.NiceIO</id>
     <version>1.0.7</version>
     <title>NiceIO (OkTools Edition)</title>
-    <description>For when you've had to use System.IO one time too many.</description>
+    <description>For when you've had to use System.IO one time too many. Check README for how to integrate this package into your project.</description>
     <authors>Lucas Meijer</authors>
     <repository type="git" url="https://github.com/scottbilas/NiceIO" />
     <license type="expression">MIT</license>
