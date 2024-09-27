@@ -1,4 +1,5 @@
-# NiceIO 
+# NiceIO
+
 [![validate](https://github.com/scottbilas/NiceIO/actions/workflows/validate.yml/badge.svg)](https://github.com/scottbilas/NiceIO/actions/workflows/validate.yml)
 
 _This is a fork of Lucas Meijer's [NiceIO](https://github.com/lucasmeijer/NiceIO). 99.9% credit goes to Lucas for this
@@ -6,7 +7,7 @@ library. I mostly just added nuget injection packaging that maintains his "just 
 
 ## About
 
-For when you've had to use `System.IO` one time too many. 
+For when you've had to use `System.IO` one time too many.
 
 I need to make c# juggle files & directories around a lot. It has to work on osx, linux and windows. It always hurts, and I've never enjoyed it. NiceIO is an attempt to fix that.
 
@@ -28,11 +29,12 @@ To get `NPath`, do the following:
 
 1. Add a reference to `OkTools.NiceIO` in your project.
 
-2. (Optional) Decide if you want `NPath` to be public API. By default, it is `internal`, but if you want your library
-to publish it or use in other public API, you can set `NICEIO_PUBLIC` as a `DefineConstant` in a project `PropertyGroup`.
+2. Choose the namespace you want `NPath` to be in by setting a `PreprocessorValue` for `NICEIO_NAMESPACE` in a
+project `ItemGroup`. Important: if you do not configure this, you will get a build error about an unknown preprocessor
+value.
 
-3. (Optional) Decide if you want `NPath` to be in the default `NiceIO` namespace. You can change it to what you want by
-setting a `PreprocessorValue` for `NICEIO_NAMESPACE` in a project `ItemGroup`.
+3. (Optional) Decide if you want `NPath` to be public API. By default, it is `internal`, but if you want your library
+to publish it or use in other public API, you can set `NICEIO_PUBLIC` as a `DefineConstant` in a project `PropertyGroup`.
 
 4. (Optional) Add members directly to `NPath` by creating a `partial class NPath` in your project and adding them there.
 
@@ -60,11 +62,11 @@ partial class NPath
     bool _someField;
     public void DoSomething() => _someField = _path.Length > 10;
 }
-``` 
+```
 
 Real world usage of the above features is demonstrated at another OkTools project at
 [Core.csproj](https://github.com/scottbilas/OkTools/blob/dev/src/Core/Core.csproj)
-and [NiceIO_Ext.cs](https://github.com/scottbilas/OkTools/blob/dev/src/Core/NiceIO_Ext.cs).     
+and [NiceIO_Ext.cs](https://github.com/scottbilas/OkTools/blob/dev/src/Core/NiceIO_Ext.cs).
 
 ## Basic Usage
 
@@ -73,7 +75,7 @@ and [NiceIO_Ext.cs](https://github.com/scottbilas/OkTools/blob/dev/src/Core/Nice
 NPath path1 = new NPath(@"/var/folders/something");
 // /var/folders/something
 
-//use back,forward,or trailing slashes,  doesnt matter
+//use back,forward,or trailing slashes, doesn't matter
 NPath path2 = new NPath(@"/var\folders/something///");
 // /var/folders/something
 
@@ -141,7 +143,7 @@ myfile.Parent.Copy("anotherdir").Files(recurse:true);
 //   /Users/lucas/anotherdir/myfile2, 
 //   /Users/lucas/anotherdir/hello/myfile3 }
 
-//easy accesors for common operations:
+//easy accessors for common operations:
 string text = myfile.ReadAllText();
 string[] lines = myfile.ReadAllLines();
 myFile.WriteAllText("hello");
