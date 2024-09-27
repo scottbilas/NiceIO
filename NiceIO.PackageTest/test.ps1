@@ -10,8 +10,15 @@ try {
 
     dotnet add package OkTools.NiceIO --source ..\bin\release --package-directory packages
     if ($LASTEXITCODE) { throw "fail to dotnet add package, error is $LASTEXITCODE" }
-
-    if ((dotnet run) -ne 'Path is a/b/c/file.txt') { throw 'it broke' }
+    
+    foreach ($target in 'Test-Namespace', 'Test-Default') {
+        "Testing $target"
+        $result = (dotnet run -c $target)
+        if ($result -ne 'Path is a/b/c/file.txt') {
+            dotnet build -c $target -bl 
+            throw 'it broke - also see msbuild.binlog'
+        }
+    }
     ''
     'Everything is shiny'
 }

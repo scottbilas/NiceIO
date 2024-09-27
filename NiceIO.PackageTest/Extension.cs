@@ -1,4 +1,10 @@
-namespace AnotherNamespace;
+namespace 
+#if ENABLE_NAMESPACE
+AnotherNamespace
+#else
+NiceIO
+#endif
+;
 
 partial class NPath
 {

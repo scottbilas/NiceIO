@@ -5,7 +5,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2016/06/nuspec.xsd">
   <metadata>
     <id>OkTools.NiceIO</id>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <title>NiceIO (OkTools Edition)</title>
     <description>For when you've had to use System.IO one time too many. Check README for how to integrate this package into your project.</description>
     <authors>Lucas Meijer</authors>
@@ -18,5 +18,6 @@
   <files>
     <file src="README.md" />
     <file src="obj/pack/NiceIO.cs.pp" target="contentFiles/cs/netstandard2.0/NiceIO.cs.pp" />
+    <file src="OkTools.NiceIO.props" target="build" />
   </files>
 </package>

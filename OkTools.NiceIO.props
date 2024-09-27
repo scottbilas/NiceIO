@@ -1,0 +1,19 @@
+<Project>
+  <ItemGroup>
+    <!--
+    TODO: figure out how to make this a default value
+    
+    The problem is that the OkTools.NiceIO.props gets imported before the project csproj,
+    so I can't put a conditional on here.
+    
+    The csproj value will override, so behavior is correct, but it will unfortunately also
+    print a build warning, which we don't want.
+    
+    No target runs as part of the preprocessing phase. It's entirely a props thing.
+    
+    Perhaps looking more deeply at the replacing code in the ms sdk will give some clues on
+    how I could avoid this..
+    -->
+    <PreprocessorValue Include="NICEIO_NAMESPACE" Value="NiceIO" Visible="false" />
+  </ItemGroup>
+</Project>
