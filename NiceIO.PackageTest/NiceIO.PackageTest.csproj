@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OkTools.NiceIO" Version="1.0.0" />
     <PreprocessorValue Include="NICEIO_NAMESPACE" Value="AnotherNamespace" Visible="false" />
   </ItemGroup>
 </Project>

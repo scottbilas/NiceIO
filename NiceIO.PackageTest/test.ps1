@@ -23,6 +23,6 @@ try {
     'Everything is shiny'
 }
 finally {
-    Pop-Location
     Move-Item -force NiceIO.PackageTest.csproj.orig NiceIO.PackageTest.csproj
+    Pop-Location
 }
