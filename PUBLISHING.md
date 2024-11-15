@@ -4,7 +4,6 @@ Do this:
 
 * Edit `NiceIO.nuspec` and bump the version
 * Check that everything is shiny
-  * `dotnet test --filter "TestCategory!=CrashesNUnitOnSystemNetFramework"`
   * `NiceIO.PackageTest/test.ps1`
 * Confirm API changes if any
   * `dotnet tool restore`

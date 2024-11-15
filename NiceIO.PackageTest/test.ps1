@@ -2,21 +2,26 @@ Push-Location $PSScriptRoot
 Copy-Item NiceIO.PackageTest.csproj NiceIO.PackageTest.csproj.orig 
 
 try {
+    # delete everything including packages
     Remove-Item -recur -ea:silent bin, obj, packages, ../bin, ../obj
 
-    dotnet restore
-    if ($LASTEXITCODE) { throw "fail to restore, error is $LASTEXITCODE" }
+    # build and test
+    dotnet test .. --filter "TestCategory!=CrashesNUnitOnSystemNetFramework"
+    dotnet build .. -c Release
 
+    # produce the niceio package
     dotnet pack .. -p:NuspecFile=NiceIO.nuspec
     if ($LASTEXITCODE) { throw "fail to dotnet pack, error is $LASTEXITCODE" }
 
-    dotnet add package OkTools.NiceIO --source ..\bin\release --package-directory packages
+    # add it to our project from local store
+    dotnet add package OkTools.NiceIO
     if ($LASTEXITCODE) { throw "fail to dotnet add package, error is $LASTEXITCODE" }
-    
+
+    # restore build and run to test that the embedding and extenions work    
     $result = (dotnet run)
-    if ($result -ne 'Path is a/b/c/file.txt') {
+    if (!$result.contains('Path is a/b/c/file.txt')) {
         dotnet build -bl
-        throw 'it broke - also see msbuild.binlog'
+        throw "it broke with result '$result' - also see msbuild.binlog"
     }
 
     ''
