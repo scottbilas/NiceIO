@@ -48,7 +48,7 @@ namespace NiceIO.Tests
         [Test]
         public void WithDifferentDriveLettersReturnsAbsolutePath()
         {
-            new NPath("c:/mydir1/mydir2/myfile").RelativeTo(new NPath("d:/mydir1")).AssertIs("c:/mydir1/mydir2/myfile");
+            new NPath("c:/mydir1/mydir2/myfile").RelativeTo(new NPath("d:/mydir1")).AssertIs("C:/mydir1/mydir2/myfile");
         }
 
         [Test]

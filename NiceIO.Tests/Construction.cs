@@ -66,8 +66,8 @@ namespace NiceIO.Tests
         }
 
         [TestCase("///mydir////myfile.txt", "/mydir/myfile.txt")]
-        [TestCase("c:///mydir////myfile.txt", "c:/mydir/myfile.txt")]
-        [TestCase(@"c:\\\mydir\\\\myfile.txt", "c:/mydir/myfile.txt")]
+        [TestCase("c:///mydir////myfile.txt", "C:/mydir/myfile.txt")]
+        [TestCase(@"c:\\\mydir\\\\myfile.txt", "C:/mydir/myfile.txt")]
         public void Ctor_FromStringWithMultipleSlashes(string test, string expected)
         {
 	        var path = new NPath(test);
@@ -211,7 +211,7 @@ namespace NiceIO.Tests
         {
             var value = new NPath("c:\\this\\is\\so\\absolute\\..\\..\\yet_can_have_dots");
             Assert.AreEqual(3, value.Depth);
-            Assert.AreEqual("c:\\this\\is\\yet_can_have_dots", value.ToString(SlashMode.Backward));
+            Assert.AreEqual("C:\\this\\is\\yet_can_have_dots", value.ToString(SlashMode.Backward));
         }
 
         [Test]

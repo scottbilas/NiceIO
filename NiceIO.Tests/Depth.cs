@@ -18,7 +18,7 @@ namespace NiceIO.Tests
         public void FileInDir() => Assert.AreEqual(2, new NPath("mydir/myfile").Depth);
 
         [Test]
-        public void WithDriveLetter() => Assert.AreEqual(2, new NPath("c:/mydir/myfile").Depth);
+        public void WithDriveLetter() => Assert.AreEqual(2, new NPath("C:/mydir/myfile").Depth);
 
         [Test]
         public void WithUNCServerName() => Assert.AreEqual(2, new NPath("\\\\MyWindowsPC/mydir/myfile").Depth);
