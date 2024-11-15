@@ -1,5 +1,5 @@
 Push-Location $PSScriptRoot
-Copy-Item NiceIO.PackageTest.csproj NiceIO.PackageTest.csproj.orig 
+Copy-Item NiceIO.PackageTest.csproj NiceIO.PackageTest.csproj.orig
 
 try {
     # delete everything including packages
@@ -17,9 +17,13 @@ try {
     dotnet add package OkTools.NiceIO
     if ($LASTEXITCODE) { throw "fail to dotnet add package, error is $LASTEXITCODE" }
 
-    # restore build and run to test that the embedding and extenions work    
-    $result = (dotnet run)
-    if (!$result.contains('Path is a/b/c/file.txt')) {
+    # restore and build
+    dotnet build
+    if ($LASTEXITCODE) { throw "fail to dotnet build, error is $LASTEXITCODE" }
+
+    # including escape chars to clear the status
+    $result = ./bin/Debug/net8.0/NiceIO.PackageTest.exe
+    if ($result -ne 'Path is a/b/c/file.txt') {
         dotnet build -bl
         throw "it broke with result '$result' - also see msbuild.binlog"
     }
