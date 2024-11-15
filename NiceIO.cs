@@ -189,20 +189,27 @@ namespace NiceIO
             {
                 // this is a root path
                 if (secondToLastChar == '\0' || secondToLastChar == ':')
-                    return path;
+                    return NormalizeDriveLetter(path);
 
                 if (numberOfForwardSlashes == 1 && IsUNCPath(path))
                     return path;
 
-                return path.Substring(0, path.Length - 1);
+                return NormalizeDriveLetter(path.Substring(0, path.Length - 1));
             }
 
             if (numberOfForwardSlashes == 0 && IsUNCPath(path))
                 return path + "/";
 
-            return path;
+            return NormalizeDriveLetter(path);
         }
 
+        static string NormalizeDriveLetter(string path)
+        {
+	        if (path.Length < 2 || path[1] != ':')
+		        return path;
+			return char.ToUpperInvariant(path[0]) + path.Substring(1);
+        }
+        
         static string CollapseSingleDots(string path)
         {
             var result = ConvertToForwardSlashPath(path).Replace("/./", "/");
