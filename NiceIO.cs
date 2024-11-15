@@ -2157,7 +2157,11 @@ namespace NiceIO
                     using (var fs = new FileStream(handle, FileAccess.Read))
                     {
                         buffer = new byte[fs.Length];
-                        fs.Read(buffer, 0, buffer.Length);
+                        var read = fs.Read(buffer, 0, buffer.Length);
+
+                        // the file must have changed underneath us, resize to match
+                        if (read != buffer.Length)
+							Array.Resize(ref buffer, read);
                     }
                 }
                 return buffer;
