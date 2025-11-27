@@ -20,6 +20,7 @@
       File="obj/pack/NiceIO.cs.pp"
       Lines="$(
         [System.IO.File]::ReadAllText('NiceIO.cs')
+          .Replace('//#pragma warning disable', '#pragma warning disable')
           .Replace('namespace NiceIO','namespace $NICEIO_NAMESPACE$')
           .Replace('NiceIO.','$NICEIO_NAMESPACE$.')
           .Replace('class NPath','partial class NPath') 

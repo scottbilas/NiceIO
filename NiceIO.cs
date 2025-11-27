@@ -1,4 +1,7 @@
-﻿// The MIT License(MIT)
+﻿//#pragma warning disable
+// ^^ keep this commented for NiceIO testing, but uncomment for embedding, so as to avoid hitting format complaints like IDE0055. (must be at very top of file)
+
+// The MIT License(MIT)
 // =====================
 //
 // Copyright © `2015-2017` `Lucas Meijer`
